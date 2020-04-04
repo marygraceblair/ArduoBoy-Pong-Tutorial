@@ -4,29 +4,31 @@
 
 #include <Arduboy2.h>
 Arduboy2 arduboy;
-int gamestate; 
+int gamestate = 0; 
+//location and size of ball
+int ballx = 62; 
+int bally = 0; 
+int ballsize = 4; 
+int ballright = 1; 
+int balldown = 1; 
 
 void setup() {
   arduboy.begin(); 
   arduboy.initRandomSeed(); 
-  arduboy.setFrameRate(60); 
-  
+  arduboy.setFrameRate(60);
   arduboy.clear(); 
-
 }
 
 void loop() {
-  
+
+  //prevent the arudboy from running too fast 
   if (!arduboy.nextFrame())
   {
     return; 
   }
-  //the tutorial is missing this function
-  //justPressed requires it at the start of each frame
+  arduboy.clear(); 
   arduboy.pollButtons();
  
-  arduboy.clear(); 
-  
   switch (gamestate) {
     case 0:
       //Title
@@ -41,6 +43,48 @@ void loop() {
       //Gameplay screen
       arduboy.setCursor(0,0); 
       arduboy.print("Gameplay");
+      arduboy.fillRect(ballx, bally, ballsize, ballsize, WHITE); 
+      if (ballright > 0)
+      {
+        ballx += 1; 
+      }
+      else
+      {
+        ballx -= 1; 
+      }
+
+      //change direction of the ball if it hits the edge of the screen
+      //arduboy screen size is 128 pixels wide
+      if (ballx == 0)
+      {
+        ballright = 1; 
+      }
+      if (ballx + ballsize == 127)
+      {
+        ballright = -1; 
+      }
+
+
+
+      if (balldown > 0)
+      {
+        bally += 1; 
+      }
+      else
+      {
+        bally -= 1; 
+      }
+
+      //flip the ball if it touches the bottom or top of the screen
+      if(bally == 0)
+      {
+        balldown = 1; 
+      }
+      if(bally + ballsize == 63)
+      {
+        balldown = -1; 
+      }
+      
       if (arduboy.justPressed(A_BUTTON)) 
       {
         gamestate = 2; 
